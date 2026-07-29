@@ -2,11 +2,14 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Play, Pause, RotateCcw, ChevronLeft, ChevronRight,
-  BookOpen, Trophy, X, ChevronDown, Check, Loader2, FileText, List
+  BookOpen, Trophy, X, ChevronDown, Check, Loader2, FileText, List,
+  SkipForward, Square, Volume2, AlertCircle
 } from "lucide-react";
 import { toArabicNumerals } from "@/lib/utils";
 
 const TOTAL_PAGES = 604;
+const RECITER = "ar.minshawi"; // الشيخ محمد صديق المنشاوي رحمه الله
+const AUDIO_BASE = `https://cdn.islamic.network/quran/audio/128/${RECITER}`;
 
 /* ── persistence helpers ── */
 function loadPagesRead(): Set<number> {
@@ -44,12 +47,21 @@ export function QuranReader() {
   const [loading, setLoading] = useState(false);
   const [activeVerse, setActiveVerse] = useState<any | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentVerseIndex, setCurrentVerseIndex] = useState(0);
+  const [audioProgress, setAudioProgress] = useState(0);   // 0–100
+  const [audioDuration, setAudioDuration] = useState(0);
+  const [audioCurrentTime, setAudioCurrentTime] = useState(0);
+  const [audioError, setAudioError] = useState(false);
+  const [autoPlayBlocked, setAutoPlayBlocked] = useState(false);
   const [pagesRead, setPagesRead] = useState<Set<number>>(loadPagesRead);
   const [showKhatma, setShowKhatma] = useState(false);
   const [surahNames, setSurahNames] = useState<Record<number, string>>({});
 
+  /* refs */
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const activeVerseRef = useRef<HTMLDivElement | null>(null);
+  const activeVerseRef = useRef<HTMLElement | null>(null);
+  const versesRef = useRef<any[]>([]);
+  versesRef.current = verses;
 
   /* ── fetch surah list once ── */
   useEffect(() => {
@@ -64,11 +76,103 @@ export function QuranReader() {
       .catch(() => {});
   }, []);
 
+  /* ── core audio stop ── */
+  const stopAudio = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.onended = null;
+      audioRef.current.onerror = null;
+      audioRef.current.ontimeupdate = null;
+      audioRef.current.onloadedmetadata = null;
+      audioRef.current = null;
+    }
+    setIsPlaying(false);
+    setAudioProgress(0);
+    setAudioCurrentTime(0);
+    setAudioDuration(0);
+  }, []);
+
+  /* ── play verse at index (stable via ref) ── */
+  const playVerseAtIndex = useCallback((index: number, autoPlay = true) => {
+    const vList = versesRef.current;
+    if (!vList.length || index < 0 || index >= vList.length) return;
+
+    const verse = vList[index];
+
+    // Clean up previous audio
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.onended = null;
+      audioRef.current.onerror = null;
+      audioRef.current.ontimeupdate = null;
+      audioRef.current.onloadedmetadata = null;
+      audioRef.current = null;
+    }
+
+    setCurrentVerseIndex(index);
+    setActiveVerse(verse);
+    setAudioError(false);
+    setAudioProgress(0);
+    setAudioCurrentTime(0);
+    setAudioDuration(0);
+
+    const audio = new Audio(`${AUDIO_BASE}/${verse.id}.mp3`);
+    audioRef.current = audio;
+
+    audio.onloadedmetadata = () => {
+      setAudioDuration(audio.duration || 0);
+    };
+
+    audio.ontimeupdate = () => {
+      setAudioCurrentTime(audio.currentTime);
+      if (audio.duration) {
+        setAudioProgress((audio.currentTime / audio.duration) * 100);
+      }
+    };
+
+    audio.onended = () => {
+      const nextIdx = index + 1;
+      if (nextIdx < versesRef.current.length) {
+        playVerseAtIndex(nextIdx, true);
+      } else {
+        setIsPlaying(false);
+        setAudioProgress(0);
+        setAudioCurrentTime(0);
+      }
+    };
+
+    audio.onerror = () => {
+      // Skip to next verse silently on error
+      const nextIdx = index + 1;
+      if (nextIdx < versesRef.current.length) {
+        playVerseAtIndex(nextIdx, true);
+      } else {
+        setIsPlaying(false);
+        setAudioError(true);
+      }
+    };
+
+    if (autoPlay) {
+      audio.play()
+        .then(() => {
+          setIsPlaying(true);
+          setAutoPlayBlocked(false);
+        })
+        .catch(() => {
+          // Browser blocked autoplay — show tap-to-play
+          setIsPlaying(false);
+          setAutoPlayBlocked(true);
+        });
+    }
+  }, []);
+
   /* ── fetch verses when mode / page / surah changes ── */
   useEffect(() => {
     setActiveVerse(null);
     stopAudio();
     setLoading(true);
+    setAudioError(false);
+    setAutoPlayBlocked(false);
 
     const url = mode === "page"
       ? `https://api.quran.com/api/v4/verses/by_page/${currentPage}?language=ar&fields=text_uthmani,verse_key,chapter_id,verse_number&per_page=50`
@@ -76,9 +180,18 @@ export function QuranReader() {
 
     fetch(url)
       .then(r => r.json())
-      .then(d => setVerses(d.verses || []))
-      .catch(console.error)
-      .finally(() => setLoading(false));
+      .then(d => {
+        const fetched = d.verses || [];
+        setVerses(fetched);
+        versesRef.current = fetched;
+        setLoading(false);
+        // Auto-play first verse of the new page/surah
+        if (fetched.length > 0) {
+          setCurrentVerseIndex(0);
+          playVerseAtIndex(0, true);
+        }
+      })
+      .catch(() => setLoading(false));
 
     if (mode === "page") localStorage.setItem("quran_last_page", currentPage.toString());
     else localStorage.setItem("quran_last_surah", selectedSurah.toString());
@@ -91,28 +204,60 @@ export function QuranReader() {
       activeVerseRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [activeVerse]);
 
-  const stopAudio = useCallback(() => {
-    if (audioRef.current) { audioRef.current.pause(); audioRef.current.onended = null; audioRef.current = null; }
-    setIsPlaying(false);
-  }, []);
+  /* ── player controls ── */
+  const handlePlayPause = useCallback(() => {
+    if (!audioRef.current) {
+      // No audio loaded — play from current index
+      playVerseAtIndex(currentVerseIndex, true);
+      return;
+    }
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play()
+        .then(() => { setIsPlaying(true); setAutoPlayBlocked(false); })
+        .catch(() => {});
+    }
+  }, [isPlaying, currentVerseIndex, playVerseAtIndex]);
 
-  const playVerse = useCallback((verse: any) => {
+  const handleStop = useCallback(() => {
     stopAudio();
-    const audio = new Audio(`https://cdn.islamic.network/quran/audio/128/ar.alafasy/${verse.id}.mp3`);
-    audioRef.current = audio;
-    audio.play().catch(() => {});
-    setIsPlaying(true);
-    audio.onended = () => setIsPlaying(false);
+    setActiveVerse(null);
+    setCurrentVerseIndex(0);
   }, [stopAudio]);
 
-  const handleVerseClick = (verse: any) => {
+  const handleRepeat = useCallback(() => {
+    playVerseAtIndex(currentVerseIndex, true);
+  }, [currentVerseIndex, playVerseAtIndex]);
+
+  const handleSkipNext = useCallback(() => {
+    const next = currentVerseIndex + 1;
+    if (next < verses.length) playVerseAtIndex(next, true);
+  }, [currentVerseIndex, verses.length, playVerseAtIndex]);
+
+  const handleVerseClick = useCallback((verse: any) => {
+    const idx = versesRef.current.findIndex(v => v.id === verse.id);
+    if (idx === -1) return;
     if (activeVerse?.id === verse.id) {
-      isPlaying ? stopAudio() : playVerse(verse);
+      handlePlayPause();
     } else {
-      setActiveVerse(verse);
-      playVerse(verse);
+      playVerseAtIndex(idx, true);
     }
-  };
+  }, [activeVerse, handlePlayPause, playVerseAtIndex]);
+
+  /* seek in current audio */
+  const handleSeek = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!audioRef.current || !audioDuration) return;
+    const pct = parseFloat(e.target.value);
+    const time = (pct / 100) * audioDuration;
+    audioRef.current.currentTime = time;
+    setAudioProgress(pct);
+    setAudioCurrentTime(time);
+  }, [audioDuration]);
+
+  /* format seconds → m:ss */
+  const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
   const goTo = (p: number) => setCurrentPage(Math.min(Math.max(1, p), TOTAL_PAGES));
 
@@ -292,10 +437,15 @@ export function QuranReader() {
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               {mode === "page" && isRead && (
                 <span className="text-green-600 flex items-center gap-1 text-xs"><Check className="w-3 h-3" /> مقروءة</span>
               )}
+              {/* Reciter badge */}
+              <span className="flex items-center gap-1 text-xs text-amber-700/80 bg-amber-100/60 px-2 py-0.5 rounded-full">
+                <Volume2 className="w-3 h-3" />
+                المنشاوي
+              </span>
               <span className="text-primary font-bold arabic-numerals">
                 {mode === "page"
                   ? `صفحة ${toArabicNumerals(currentPage)}`
@@ -307,8 +457,9 @@ export function QuranReader() {
           {/* ── Reader Area ── */}
           <div className="p-6 md:p-10 min-h-[55vh] max-h-[65vh] overflow-y-auto" dir="rtl">
             {loading ? (
-              <div className="flex justify-center items-center h-48">
+              <div className="flex flex-col justify-center items-center h-48 gap-3">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                <span className="text-sm text-muted-foreground">جارٍ تحميل الصفحة...</span>
               </div>
             ) : (
               <div className="space-y-8">
@@ -324,7 +475,7 @@ export function QuranReader() {
                 {mode === "surah" ? (
                   /* ── Surah mode: one flowing block ── */
                   <div className="text-center leading-[3.2] text-2xl md:text-3xl font-serif text-foreground/90">
-                    {verses.map(verse => {
+                    {verses.map((verse, idx) => {
                       const isActive = activeVerse?.id === verse.id;
                       return (
                         <span
@@ -332,7 +483,11 @@ export function QuranReader() {
                           ref={isActive ? (el => { activeVerseRef.current = el; }) : null}
                           onClick={() => handleVerseClick(verse)}
                           className={`inline cursor-pointer transition-all duration-200 rounded-sm px-0.5
-                            ${isActive ? "bg-amber-100 text-amber-900 ring-2 ring-amber-400/60 rounded-md" : "hover:bg-amber-50"}`}
+                            ${isActive
+                              ? "bg-amber-100 text-amber-900 ring-2 ring-amber-400/60 rounded-md"
+                              : idx === currentVerseIndex && isPlaying
+                                ? "bg-amber-50/80"
+                                : "hover:bg-amber-50"}`}
                           title="اضغط للاستماع"
                         >
                           {verse.text_uthmani}
@@ -361,7 +516,7 @@ export function QuranReader() {
                         </div>
                       )}
                       <div className="text-center leading-[3.2] text-2xl md:text-3xl font-serif text-foreground/90">
-                        {group.verses.map(verse => {
+                        {group.verses.map((verse) => {
                           const isActive = activeVerse?.id === verse.id;
                           return (
                             <span
@@ -369,7 +524,9 @@ export function QuranReader() {
                               ref={isActive ? (el => { activeVerseRef.current = el; }) : null}
                               onClick={() => handleVerseClick(verse)}
                               className={`inline cursor-pointer transition-all duration-200 rounded-sm px-0.5
-                                ${isActive ? "bg-amber-100 text-amber-900 ring-2 ring-amber-400/60 rounded-md" : "hover:bg-amber-50"}`}
+                                ${isActive
+                                  ? "bg-amber-100 text-amber-900 ring-2 ring-amber-400/60 rounded-md"
+                                  : "hover:bg-amber-50"}`}
                               title="اضغط للاستماع"
                             >
                               {verse.text_uthmani}
@@ -388,33 +545,111 @@ export function QuranReader() {
             )}
           </div>
 
-          {/* ── Active Verse Controls ── */}
+          {/* ── Persistent Player Bar ── */}
           <AnimatePresence>
-            {activeVerse && (
+            {(activeVerse || autoPlayBlocked) && !loading && (
               <motion.div
-                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
-                className="border-t border-amber-200/60 bg-amber-50/70 px-5 py-3 flex items-center gap-3 flex-wrap"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="border-t border-amber-200/60 bg-gradient-to-b from-amber-50/80 to-amber-100/60 px-4 py-3"
                 dir="rtl"
               >
-                <span className="text-xs text-muted-foreground">
-                  {surahNames[activeVerse.chapter_id] ? `سورة ${surahNames[activeVerse.chapter_id]}` : `سورة ${activeVerse.chapter_id}`}
-                  {" – آية "}{toArabicNumerals(activeVerse.verse_number)}
-                </span>
-                <div className="flex items-center gap-2 mr-auto">
+                {/* Auto-play blocked notice */}
+                {autoPlayBlocked && !audioError && (
+                  <div className="flex items-center gap-2 mb-2 text-xs text-amber-700 bg-amber-100 rounded-lg px-3 py-1.5">
+                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span>اضغط على زر التشغيل لبدء التلاوة</span>
+                  </div>
+                )}
+
+                {/* Audio unavailable error */}
+                {audioError && (
+                  <div className="flex items-center gap-2 mb-2 text-xs text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0 text-red-500" />
+                    <span>تعذّر تحميل ملف التلاوة — تحقق من اتصالك بالإنترنت ثم حاول مجدداً</span>
+                    <button
+                      onClick={() => { setAudioError(false); playVerseAtIndex(currentVerseIndex, true); }}
+                      className="mr-auto text-red-600 hover:text-red-800 underline whitespace-nowrap"
+                    >
+                      إعادة المحاولة
+                    </button>
+                  </div>
+                )}
+
+                {/* Verse info */}
+                {activeVerse && (
+                  <div className="flex items-center justify-between mb-2 text-xs text-muted-foreground">
+                    <span>
+                      {surahNames[activeVerse.chapter_id]
+                        ? `سورة ${surahNames[activeVerse.chapter_id]}`
+                        : `سورة ${activeVerse.chapter_id}`}
+                      {" – آية "}{toArabicNumerals(activeVerse.verse_number)}
+                    </span>
+                    <span className="text-amber-700/70">
+                      آية {toArabicNumerals(currentVerseIndex + 1)} / {toArabicNumerals(verses.length)}
+                    </span>
+                  </div>
+                )}
+
+                {/* Progress bar */}
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-xs text-muted-foreground tabular-nums w-8 text-left">
+                    {fmt(audioCurrentTime)}
+                  </span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    step={0.1}
+                    value={audioProgress}
+                    onChange={handleSeek}
+                    className="flex-1 h-1.5 appearance-none bg-amber-200 rounded-full cursor-pointer accent-amber-600"
+                    style={{ direction: "ltr" }}
+                  />
+                  <span className="text-xs text-muted-foreground tabular-nums w-8 text-right">
+                    {fmt(audioDuration)}
+                  </span>
+                </div>
+
+                {/* Controls */}
+                <div className="flex items-center justify-center gap-3">
+                  {/* Repeat current verse */}
                   <button
-                    onClick={() => isPlaying ? stopAudio() : playVerse(activeVerse)}
-                    className="flex items-center gap-1.5 bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+                    onClick={handleRepeat}
+                    title="إعادة الآية"
+                    className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-amber-100 transition-colors"
                   >
-                    {isPlaying ? <><Pause className="w-3 h-3" /> إيقاف</> : <><Play className="w-3 h-3" /> استمع</>}
+                    <RotateCcw className="w-4 h-4" />
                   </button>
+
+                  {/* Play / Pause */}
                   <button
-                    onClick={() => { stopAudio(); setTimeout(() => playVerse(activeVerse), 50); }}
-                    className="flex items-center gap-1.5 bg-secondary text-foreground/70 hover:bg-primary/10 hover:text-primary px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+                    onClick={handlePlayPause}
+                    className="flex items-center gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90 px-5 py-2 rounded-xl text-sm font-medium transition-colors shadow-sm"
                   >
-                    <RotateCcw className="w-3 h-3" /> تكرار
+                    {isPlaying
+                      ? <><Pause className="w-4 h-4" /> إيقاف مؤقت</>
+                      : <><Play className="w-4 h-4" /> تشغيل</>}
                   </button>
-                  <button onClick={() => { stopAudio(); setActiveVerse(null); }} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground transition-colors">
-                    <X className="w-3.5 h-3.5" />
+
+                  {/* Skip to next verse */}
+                  <button
+                    onClick={handleSkipNext}
+                    disabled={currentVerseIndex >= verses.length - 1}
+                    title="الآية التالية"
+                    className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-amber-100 transition-colors disabled:opacity-40"
+                  >
+                    <SkipForward className="w-4 h-4" />
+                  </button>
+
+                  {/* Stop */}
+                  <button
+                    onClick={handleStop}
+                    title="إيقاف"
+                    className="p-1.5 rounded-lg text-muted-foreground hover:text-red-500 hover:bg-red-50 transition-colors"
+                  >
+                    <Square className="w-4 h-4" />
                   </button>
                 </div>
               </motion.div>
@@ -463,7 +698,7 @@ export function QuranReader() {
         </div>
 
         <p className="text-center text-xs text-muted-foreground/60 mt-4">
-          اضغط على أي آية للاستماع إليها · يتم حفظ تقدّمك تلقائياً
+          تلاوة الشيخ محمد صديق المنشاوي رحمه الله · تبدأ التلاوة تلقائياً عند اختيار الصفحة
         </p>
       </div>
     </section>
