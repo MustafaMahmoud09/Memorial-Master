@@ -1,0 +1,150 @@
+HERO SECTION REDESIGN – LUXURY EDITION
+
+You are an award-winning UI/UX Designer and Creative Director.
+
+Your task is to completely redesign only the Hero Section (the first screen of the website).
+
+Do NOT modify the rest of the website.
+
+Do NOT change any existing functionality.
+
+Only redesign the first section to make it significantly more elegant, modern, emotional, and luxurious.
+
+---
+
+REMOVE THE CURRENT HERO
+
+Delete the current Hero layout completely.
+
+Do not reuse the existing structure.
+
+Create a brand-new premium Hero Section from scratch.
+
+---
+
+REPLACE THE PHOTO
+
+I will upload a new portrait of my father.
+
+Remove the current image entirely.
+
+Use only the newly uploaded image.
+
+The new image must replace the old one everywhere in the Hero Section.
+
+---
+
+PHOTO DESIGN
+
+The uploaded image must become the visual centerpiece of the page.
+
+Requirements:
+
+- Display the image inside a perfect circular frame.
+- Ensure the entire photo is visible without cropping the face or cutting important parts.
+- Scale the image intelligently to preserve all important details.
+- Blend the circular portrait naturally into the Hero background.
+- Add a premium glass border.
+- Add a soft elegant shadow.
+- Add a subtle golden glow.
+- Add a very gentle floating animation.
+- Preserve the image quality and natural colors.
+- Do not distort or stretch the image.
+
+The portrait should feel as if it is part of the interface itself.
+
+---
+
+HERO LAYOUT
+
+Create a clean, luxurious composition with excellent spacing.
+
+Display prominently:
+
+المهندس أيمن مبروك ريان
+
+Below the name, display this prayer:
+
+اللهم اغفر له وارحمه، وعافه واعفُ عنه، وأكرم نُزُله، ووسِّع مُدخله، واجعل هذا العمل صدقةً جاريةً له. اللهم آمين.
+
+---
+
+INFORMATION CARDS
+
+Place the information below in elegant glass cards (Glassmorphism).
+
+Each item must have its own separate card with:
+
+- Frosted glass effect.
+- Soft blur.
+- Rounded corners.
+- Thin elegant border.
+- Soft shadow.
+- Small premium icon.
+- Smooth hover animation.
+
+Create separate cards for:
+
+- 📅 Date of Passing (Gregorian)
+- 🌙 Date of Passing (Hijri)
+- ⏳ Time Passed Since His Passing (Live Counter)
+- 🕌 Number of Fridays Since 11 March 2022 (updates automatically)
+- 🕒 Current Time
+- 📅 Current Gregorian Date
+- 🌙 Current Hijri Date
+- 🕌 Time Remaining Until the Next Prayer
+
+All values must update automatically in real time.
+
+---
+
+BACKGROUND
+
+Use a clean luxury white background.
+
+Add:
+
+- Soft golden ambient lighting.
+- Very subtle Islamic geometric patterns with low opacity.
+- Gentle gradients.
+- Plenty of white space.
+
+Avoid visual clutter.
+
+---
+
+ANIMATIONS
+
+Use premium animations only.
+
+- Smooth page entrance.
+- Fade-in.
+- Soft floating portrait.
+- Gentle card reveal.
+- Elegant hover effects.
+- Smooth transitions.
+
+Animations should be calm and refined.
+
+---
+
+RESPONSIVE DESIGN
+
+The Hero Section must look perfect on:
+
+- Mobile phones.
+- Tablets.
+- Laptops.
+- Desktop monitors.
+
+The portrait, cards, spacing, and typography must adapt beautifully to every screen size.
+
+---
+
+FINAL GOAL
+
+The Hero Section must become the strongest visual part of the website.
+
+It should immediately convey dignity, tranquility, elegance, and respect.
+
+The first impression should be that of a premium, handcrafted digital experience, with the new portrait seamlessly integrated into the design and every information card presented in a luxurious and highly readable way.
