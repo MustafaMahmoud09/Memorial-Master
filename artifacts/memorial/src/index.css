@@ -49,45 +49,45 @@
 }
 
 :root {
-  /* Dark Gold Sanctuary Theme */
-  --background: 30 13% 6%;
-  --foreground: 35 33% 93%;
-  --border: 30 13% 16%;
-  --card: 30 13% 9%;
-  --card-foreground: 35 33% 93%;
-  --card-border: 30 13% 16%;
-  --primary: 46 65% 52%;
-  --primary-foreground: 30 13% 6%;
-  --secondary: 30 13% 12%;
-  --secondary-foreground: 46 65% 75%;
-  --muted: 30 13% 12%;
-  --muted-foreground: 35 20% 65%;
-  --accent: 46 65% 52%;
-  --accent-foreground: 30 13% 6%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 35 33% 93%;
-  --input: 30 13% 16%;
-  --ring: 46 65% 52%;
+  /* Pure White Sanctuary Theme */
+  --background: 0 0% 100%;
+  --foreground: 25 15% 15%;
+  --border: 35 20% 88%;
+  --card: 40 30% 98%;
+  --card-foreground: 25 15% 15%;
+  --card-border: 35 20% 88%;
+  --primary: 43 74% 42%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 40 20% 95%;
+  --secondary-foreground: 25 15% 30%;
+  --muted: 40 20% 96%;
+  --muted-foreground: 25 10% 50%;
+  --accent: 43 74% 42%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 62.8% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --input: 35 20% 88%;
+  --ring: 43 74% 42%;
   --radius: 1rem;
 }
 
 .friday-mode {
-  --background: 145 48% 5%;
-  --foreground: 46 65% 85%;
-  --border: 145 46% 15%;
-  --card: 145 46% 8%;
-  --card-foreground: 46 65% 85%;
-  --card-border: 145 46% 18%;
-  --primary: 46 65% 52%;
-  --primary-foreground: 145 48% 5%;
-  --secondary: 145 46% 12%;
-  --secondary-foreground: 46 65% 85%;
-  --muted: 145 46% 12%;
-  --muted-foreground: 145 20% 60%;
-  --accent: 46 65% 52%;
-  --accent-foreground: 145 48% 5%;
-  --input: 145 46% 15%;
-  --ring: 46 65% 52%;
+  --background: 140 60% 98%;
+  --foreground: 140 30% 12%;
+  --border: 140 30% 82%;
+  --card: 140 40% 96%;
+  --card-foreground: 140 30% 12%;
+  --card-border: 140 30% 82%;
+  --primary: 43 74% 38%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 140 30% 92%;
+  --secondary-foreground: 140 30% 20%;
+  --muted: 140 30% 93%;
+  --muted-foreground: 140 15% 45%;
+  --accent: 145 55% 36%;
+  --accent-foreground: 0 0% 100%;
+  --input: 140 30% 82%;
+  --ring: 43 74% 38%;
 }
 
 @layer base {
@@ -118,14 +118,14 @@
 }
 
 .gold-gradient-text {
-  background: linear-gradient(135deg, #f3e5ab 0%, #d4af37 50%, #aa7c11 100%);
+  background: linear-gradient(135deg, #b8860b 0%, #c9a227 50%, #8b6914 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .gold-gradient-bg {
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.15) 0%, rgba(201, 162, 39, 0.04) 100%);
 }
 
 .tasbeeh-btn {
@@ -150,11 +150,13 @@
 }
 
 .glass-panel {
-  background: rgba(30, 27, 24, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(212, 175, 55, 0.1);
+  background: rgba(255, 252, 245, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(201, 162, 39, 0.18);
+  box-shadow: 0 4px 24px rgba(180, 140, 20, 0.07), 0 1px 4px rgba(0,0,0,0.04);
 }
 .friday-mode .glass-panel {
-  background: rgba(14, 38, 24, 0.4);
+  background: rgba(240, 255, 245, 0.75);
+  border-color: rgba(34, 139, 80, 0.18);
 }
