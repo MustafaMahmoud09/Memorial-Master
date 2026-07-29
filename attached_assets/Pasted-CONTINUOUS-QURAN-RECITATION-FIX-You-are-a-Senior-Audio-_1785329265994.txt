@@ -1,0 +1,166 @@
+CONTINUOUS QURAN RECITATION FIX
+
+You are a Senior Audio Engineer and Full-Stack Developer specializing in Quran applications.
+
+Your task is to fix the Quran recitation system.
+
+Do NOT redesign the application.
+
+Do NOT change any existing features.
+
+Only improve the playback engine.
+
+---
+
+PRIMARY OBJECTIVE
+
+The recitation must become continuous and uninterrupted.
+
+Currently, after an Ayah finishes, the player waits for a noticeable delay before playing the next Ayah.
+
+This behavior is unacceptable.
+
+Remove this delay completely.
+
+The next Ayah must begin immediately after the previous Ayah finishes.
+
+The transition should feel seamless and natural.
+
+---
+
+CONTINUOUS PLAYBACK
+
+Implement true continuous playback.
+
+When one Ayah ends:
+
+- Immediately start the next Ayah.
+- No waiting.
+- No loading delay.
+- No silent gap.
+- No unnecessary buffering.
+- No user interaction required.
+
+Playback must feel like listening to one continuous recording.
+
+---
+
+PRELOAD AUDIO
+
+Always preload the next several Ayahs while the current Ayah is playing.
+
+Maintain a playback queue.
+
+The next audio must already be loaded before the current Ayah finishes.
+
+Never wait for a network request after an Ayah ends.
+
+---
+
+SMART BUFFER
+
+Implement intelligent buffering.
+
+Always keep upcoming Ayahs ready.
+
+Automatically refill the queue while listening.
+
+Prevent playback interruption even on slow internet connections.
+
+---
+
+END OF SURAH
+
+When the final Ayah of a Surah finishes:
+
+Automatically continue to the first Ayah of the next Surah.
+
+No popup.
+
+No confirmation.
+
+No stopping.
+
+No pause.
+
+The listener should experience uninterrupted recitation.
+
+---
+
+END OF PAGE
+
+If the application is in Page Reading Mode:
+
+When the last Ayah on the current page finishes:
+
+Automatically move to the next Quran page.
+
+Immediately continue recitation from the first Ayah on that page.
+
+No interruption.
+
+---
+
+PLAYBACK MODES
+
+Support both modes:
+
+Surah Mode
+
+Continue automatically through the entire Quran from one Surah to the next.
+
+Page Mode
+
+Continue automatically from one Quran page to the next until the end of the Mushaf.
+
+The currently selected mode determines the playback behavior.
+
+---
+
+PERFORMANCE
+
+Optimize audio playback.
+
+Prevent:
+
+- Playback gaps.
+- Duplicate playback.
+- Audio overlap.
+- Buffer underflow.
+- Memory leaks.
+- Excessive network requests.
+- Audio glitches.
+
+Playback must remain smooth on all devices.
+
+---
+
+USER EXPERIENCE
+
+The user should feel like listening to one continuous professional Quran recitation.
+
+No interruptions.
+
+No pauses.
+
+No manual actions.
+
+No visible loading.
+
+The transition between Ayahs, Surahs, and pages must be seamless.
+
+---
+
+FINAL REQUIREMENTS
+
+Test all scenarios:
+
+- Between consecutive Ayahs.
+- Between pages.
+- Between Surahs.
+- Long listening sessions.
+- Slow internet.
+- Cached audio.
+- Offline cached playback.
+
+The final result must provide continuous, smooth, uninterrupted Quran recitation from the first Ayah until the end of the Quran, automatically advancing through Ayahs, pages, and Surahs according to the selected reading mode, with zero unnecessary delay between verses.

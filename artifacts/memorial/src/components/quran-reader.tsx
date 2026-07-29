@@ -80,9 +80,20 @@ export function QuranReader() {
   const volumeRef          = useRef(volume);
   const pendingAutoplayRef = useRef(false); // queued after browser blocks autoplay
 
-  versesRef.current    = verses;
+  // Preload buffer: verse.id → pre-fetched HTMLAudioElement
+  const preloadBufferRef   = useRef<Map<number, HTMLAudioElement>>(new Map());
+
+  // Stable refs so callbacks always see current navigation state
+  const modeRef            = useRef(mode);
+  const currentPageRef     = useRef(currentPage);
+  const selectedSurahRef   = useRef(selectedSurah);
+
+  versesRef.current        = verses;
   playbackSpeedRef.current = playbackSpeed;
-  volumeRef.current    = volume;
+  volumeRef.current        = volume;
+  modeRef.current          = mode;
+  currentPageRef.current   = currentPage;
+  selectedSurahRef.current = selectedSurah;
 
   // ── Load full preferences from IndexedDB on mount ────────────────────────
   useEffect(() => {
@@ -147,20 +158,70 @@ export function QuranReader() {
     if (mode === "page") addToHistory(currentPage).catch(() => {});
   }, [mode, currentPage]);
 
+  // ── Clear preload buffer ──────────────────────────────────────────────────
+  const clearPreloadBuffer = useCallback(() => {
+    preloadBufferRef.current.forEach(a => { a.pause(); a.src = ""; });
+    preloadBufferRef.current.clear();
+  }, []);
+
   // ── Core audio stop ───────────────────────────────────────────────────────
   const stopAudio = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause();
-      audioRef.current.onended         = null;
-      audioRef.current.onerror         = null;
-      audioRef.current.ontimeupdate    = null;
+      audioRef.current.onended          = null;
+      audioRef.current.onerror          = null;
+      audioRef.current.ontimeupdate     = null;
       audioRef.current.onloadedmetadata = null;
-      audioRef.current                 = null;
+      audioRef.current                  = null;
     }
+    clearPreloadBuffer();
     setIsPlaying(false);
     setAudioProgress(0);
     setAudioCurrentTime(0);
     setAudioDuration(0);
+  }, [clearPreloadBuffer]);
+
+  // ── Preload upcoming verses into the buffer ───────────────────────────────
+  const PRELOAD_AHEAD = 3;
+  const refillBuffer = useCallback((fromIndex: number) => {
+    const vList = versesRef.current;
+    const buf   = preloadBufferRef.current;
+    // Load up to PRELOAD_AHEAD verses ahead
+    for (let i = fromIndex + 1; i <= fromIndex + PRELOAD_AHEAD && i < vList.length; i++) {
+      const v = vList[i];
+      if (!v || buf.has(v.id)) continue;
+      const a        = new Audio(`${AUDIO_BASE}/${v.id}.mp3`);
+      a.preload      = "auto";
+      a.volume       = volumeRef.current;
+      a.playbackRate = playbackSpeedRef.current;
+      buf.set(v.id, a);
+    }
+    // Evict entries that are too far behind current position (memory management)
+    buf.forEach((a, id) => {
+      const idx = vList.findIndex(v => v.id === id);
+      if (idx !== -1 && (idx < fromIndex - 1 || idx > fromIndex + PRELOAD_AHEAD)) {
+        a.pause(); a.src = ""; buf.delete(id);
+      }
+    });
+  }, []);
+
+  // ── Auto-advance to next page or surah at end of content ─────────────────
+  const handleEndOfContent = useCallback(() => {
+    if (modeRef.current === "page") {
+      const nextPage = currentPageRef.current + 1;
+      if (nextPage <= TOTAL_PAGES) {
+        setCurrentPage(nextPage);        // triggers fetch + autoplay of next page
+      } else {
+        setIsPlaying(false);             // reached end of the Mushaf
+      }
+    } else {
+      const nextSurah = selectedSurahRef.current + 1;
+      if (nextSurah <= 114) {
+        setSelectedSurah(nextSurah);     // triggers fetch + autoplay of next surah
+      } else {
+        setIsPlaying(false);             // reached end of the Quran
+      }
+    }
   }, []);
 
   // ── Play verse at index ───────────────────────────────────────────────────
@@ -169,7 +230,7 @@ export function QuranReader() {
     if (!vList.length || index < 0 || index >= vList.length) return;
     const verse = vList[index];
 
-    // Tear down previous audio cleanly
+    // Detach previous audio without destroying its preloaded siblings
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.onended          = null;
@@ -186,10 +247,23 @@ export function QuranReader() {
     setAudioCurrentTime(0);
     setAudioDuration(0);
 
-    const audio = new Audio(`${AUDIO_BASE}/${verse.id}.mp3`);
+    // ── Use pre-loaded audio if available (zero network wait) ────────────
+    const buf = preloadBufferRef.current;
+    let audio: HTMLAudioElement;
+    if (buf.has(verse.id)) {
+      audio = buf.get(verse.id)!;
+      buf.delete(verse.id);         // now the active track — remove from pool
+      audio.currentTime = 0;        // always start from the beginning
+    } else {
+      audio         = new Audio(`${AUDIO_BASE}/${verse.id}.mp3`);
+      audio.preload = "auto";
+    }
     audio.volume       = volumeRef.current;
     audio.playbackRate = playbackSpeedRef.current;
     audioRef.current   = audio;
+
+    // Kick off preloading of the next PRELOAD_AHEAD verses immediately
+    refillBuffer(index);
 
     audio.onloadedmetadata = () => setAudioDuration(audio.duration || 0);
 
@@ -201,11 +275,11 @@ export function QuranReader() {
     audio.onended = () => {
       const next = index + 1;
       if (next < versesRef.current.length) {
+        // Next verse is already buffered — seamless, zero-gap transition
         playVerseAtIndex(next, true);
       } else {
-        setIsPlaying(false);
-        setAudioProgress(0);
-        setAudioCurrentTime(0);
+        // End of current page / surah — auto-advance
+        handleEndOfContent();
       }
     };
 
@@ -214,10 +288,9 @@ export function QuranReader() {
       setIsPlaying(false);
       const next = index + 1;
       if (next < versesRef.current.length) {
-        setTimeout(() => {
-          setAudioError(false);
-          playVerseAtIndex(next, true);
-        }, 2500);
+        setTimeout(() => { setAudioError(false); playVerseAtIndex(next, true); }, 1500);
+      } else {
+        setTimeout(() => { setAudioError(false); handleEndOfContent(); }, 1500);
       }
     };
 
@@ -231,7 +304,7 @@ export function QuranReader() {
           pendingAutoplayRef.current = true;
         });
     }
-  }, []);
+  }, [refillBuffer, handleEndOfContent]);
 
   // ── Deferred autoplay: fire on first user interaction ────────────────────
   useEffect(() => {
@@ -255,14 +328,16 @@ export function QuranReader() {
     };
   }, [autoPlayBlocked]);
 
-  // ── Update volume on all active audio ────────────────────────────────────
+  // ── Propagate volume to active + preloaded audio ─────────────────────────
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = volume;
+    preloadBufferRef.current.forEach(a => { a.volume = volume; });
   }, [volume]);
 
-  // ── Update playback speed on active audio ────────────────────────────────
+  // ── Propagate playback speed to active + preloaded audio ─────────────────
   useEffect(() => {
     if (audioRef.current) audioRef.current.playbackRate = playbackSpeed;
+    preloadBufferRef.current.forEach(a => { a.playbackRate = playbackSpeed; });
   }, [playbackSpeed]);
 
   // ── Fetch verses when mode / page / surah changes ────────────────────────
