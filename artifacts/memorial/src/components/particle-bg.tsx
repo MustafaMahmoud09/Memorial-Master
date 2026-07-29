@@ -1,34 +1,39 @@
 import { useEffect, useState } from 'react';
 
 export function ParticleBackground() {
-  const [particles, setParticles] = useState<Array<{ id: number; left: number; delay: number; duration: number; size: number }>>([]);
+  const [particles, setParticles] = useState<Array<{
+    id: number; left: number; delay: number; duration: number; size: number;
+  }>>([]);
 
   useEffect(() => {
-    // Generate static particle data once on mount
-    const p = Array.from({ length: 40 }).map((_, i) => ({
+    // Fewer, more subtle particles for the luxury white theme
+    const p = Array.from({ length: 20 }).map((_, i) => ({
       id: i,
       left: Math.random() * 100,
-      delay: Math.random() * 5,
-      duration: 3 + Math.random() * 4,
-      size: 0.2 + Math.random() * 0.5
+      delay: Math.random() * 6,
+      duration: 5 + Math.random() * 6,
+      size: 0.15 + Math.random() * 0.3,
     }));
     setParticles(p);
   }, []);
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {/* Soft gradient radial mask overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-background/80 to-background z-10" />
-      
+      {/* Soft warm tint at the very top */}
+      <div className="absolute top-0 inset-x-0 h-96 bg-gradient-to-b from-[#FFFDF5] to-transparent opacity-60" />
+
+      {/* Gold dust particles */}
       {particles.map((p) => (
         <div
           key={p.id}
-          className="absolute bottom-0 rounded-full bg-primary/40 blur-[1px]"
+          className="absolute bottom-0 rounded-full"
           style={{
             left: `${p.left}%`,
             width: `${p.size}rem`,
             height: `${p.size}rem`,
-            animation: `shimmer ${p.duration}s linear ${p.delay}s infinite`
+            background: "rgba(201, 162, 39, 0.35)",
+            filter: "blur(1px)",
+            animation: `shimmer ${p.duration}s linear ${p.delay}s infinite`,
           }}
         />
       ))}

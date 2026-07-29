@@ -7,16 +7,17 @@ import { ar } from "date-fns/locale";
 import { Send, HeartHandshake, Loader2 } from "lucide-react";
 import { toArabicNumerals } from "@/lib/utils";
 
+const GOLD = "linear-gradient(135deg, #B8860B 0%, #C9A227 50%, #8B6914 100%)";
+
 export function DuaSection() {
-  const [duaText, setDuaText] = useState("");
+  const [duaText, setDuaText]   = useState("");
   const { data: duas = [], isLoading } = useGetDuas();
-  const submitDua = useSubmitDua();
+  const submitDua   = useSubmitDua();
   const queryClient = useQueryClient();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!duaText.trim()) return;
-
     submitDua.mutate(
       { data: { text: duaText } },
       {
@@ -24,41 +25,55 @@ export function DuaSection() {
           setDuaText("");
           queryClient.invalidateQueries({ queryKey: getGetDuasQueryKey() });
           queryClient.invalidateQueries({ queryKey: getGetStatsQueryKey() });
-        }
+        },
       }
     );
   };
 
   return (
-    <section className="py-24 px-4 bg-black/20 relative z-10">
+    <section className="py-28 px-4 bg-[#FEFCF5] relative z-10 border-y border-gray-100">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <HeartHandshake className="w-10 h-10 text-primary mx-auto mb-4 opacity-80" />
-          <h2 className="text-3xl md:text-4xl font-serif text-foreground gold-gradient-text mb-4">سجل دعاءك</h2>
-          <p className="text-muted-foreground text-lg">
-            اكتب دعاءً نابعاً من القلب، يكون له نوراً وسلاماً.
-          </p>
+
+        {/* Header */}
+        <div className="text-center mb-14">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-6"
+            style={{ background: "rgba(201,162,39,0.07)", border: "1px solid rgba(201,162,39,0.18)" }}>
+            <HeartHandshake className="w-6 h-6 text-[#C9A227]" />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-serif mb-3"
+            style={{ background: GOLD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+            سجّل دعاءك
+          </h2>
+          <p className="text-gray-500 text-lg">اكتب دعاءً نابعاً من القلب، يكون له نوراً وسلاماً.</p>
         </div>
 
-        <motion.form 
+        {/* Form */}
+        <motion.form
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          onSubmit={handleSubmit} 
-          className="glass-panel rounded-2xl p-4 md:p-6 mb-16 border border-primary/20 shadow-2xl"
+          onSubmit={handleSubmit}
+          className="rounded-2xl p-4 md:p-6 mb-16"
+          style={{
+            background: "rgba(255,253,245,0.95)",
+            backdropFilter: "blur(16px)",
+            border: "1px solid rgba(201,162,39,0.2)",
+            boxShadow: "0 4px 30px rgba(201,162,39,0.07)",
+          }}
         >
           <div className="relative">
             <textarea
               value={duaText}
-              onChange={(e) => setDuaText(e.target.value)}
+              onChange={e => setDuaText(e.target.value)}
               placeholder="اللهم اغفر له وارحمه..."
-              className="w-full bg-background/50 border border-border rounded-xl p-4 min-h-[120px] text-foreground font-serif text-lg focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none transition-all placeholder:text-muted-foreground/50"
+              className="w-full bg-white border border-gray-200 rounded-xl p-4 min-h-[120px] text-gray-800 font-serif text-lg focus:outline-none focus:ring-2 focus:ring-[#C9A227]/30 focus:border-[#C9A227]/40 resize-none transition-all placeholder:text-gray-300"
               dir="rtl"
             />
             <button
               type="submit"
               disabled={!duaText.trim() || submitDua.isPending}
-              className="absolute bottom-4 left-4 bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-2.5 rounded-lg font-medium transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="absolute bottom-4 left-4 text-white px-6 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-md"
+              style={{ background: GOLD }}
             >
               {submitDua.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4 ml-1" />}
               أرسل الدعاء
@@ -66,37 +81,34 @@ export function DuaSection() {
           </div>
         </motion.form>
 
+        {/* Visitor duas */}
         <div className="space-y-6">
-          <h3 className="text-2xl font-serif text-foreground/90 border-b border-border/50 pb-4 flex justify-between items-center">
+          <h3 className="text-2xl font-serif text-gray-700 border-b border-gray-100 pb-4 flex justify-between items-center">
             <span>دعوات الزوار</span>
-            <span className="text-sm font-sans text-primary bg-primary/10 px-3 py-1 rounded-full arabic-numerals">
+            <span className="text-sm font-sans text-[#B8860B] bg-[#C9A227]/08 px-3 py-1 rounded-full arabic-numerals border border-[#C9A227]/20">
               {toArabicNumerals(duas.length)} دعاء
             </span>
           </h3>
 
           {isLoading ? (
             <div className="flex justify-center py-10">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              <Loader2 className="w-8 h-8 animate-spin text-[#C9A227]" />
             </div>
           ) : duas.length === 0 ? (
-            <div className="text-center py-10 text-muted-foreground font-serif">
-              كن أول من يدعو له اليوم.
-            </div>
+            <div className="text-center py-10 text-gray-400 font-serif">كن أول من يدعو له اليوم.</div>
           ) : (
             <div className="grid gap-4 md:grid-cols-2">
               {duas.map((dua, i) => (
                 <motion.div
                   key={dua.id}
-                  initial={{ opacity: 0, scale: 0.95 }}
+                  initial={{ opacity: 0, scale: 0.97 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: (i % 10) * 0.05 }}
-                  className="bg-card border border-border p-5 rounded-xl shadow-sm hover:border-primary/30 transition-colors"
+                  className="bg-white rounded-2xl p-6 border border-gray-100 hover:border-[#C9A227]/25 transition-colors shadow-sm hover:shadow-md"
                 >
-                  <p className="text-foreground/90 font-serif text-lg leading-loose mb-4">
-                    "{dua.text}"
-                  </p>
-                  <div className="text-xs text-muted-foreground font-sans arabic-numerals">
+                  <p className="text-gray-700 font-serif text-lg leading-loose mb-4">"{dua.text}"</p>
+                  <div className="text-xs text-gray-400 font-sans arabic-numerals">
                     {formatDistanceToNow(new Date(dua.createdAt), { addSuffix: true, locale: ar })}
                   </div>
                 </motion.div>

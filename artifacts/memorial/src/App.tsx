@@ -21,7 +21,7 @@ function App() {
   if (typeof document !== 'undefined') {
     document.documentElement.dir = 'rtl';
     document.documentElement.lang = 'ar';
-    document.documentElement.classList.add('dark'); // Force dark theme variables
+    document.documentElement.classList.remove('dark'); // Luxury light theme
   }
 
   return (
