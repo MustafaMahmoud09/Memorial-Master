@@ -1,0 +1,332 @@
+UPGRADE THE QURAN SYSTEM – STRICT IMPLEMENTATION PROMPT
+
+You are the lead engineer responsible for upgrading the existing Quran application.
+
+Your task is to improve the current project without removing any existing functionality.
+
+Do NOT redesign the application.
+
+Do NOT change the UI unless required for better usability.
+
+Keep all existing features working.
+
+Your mission is to create the most stable, fastest, and most reliable Quran experience possible.
+
+---
+
+PRIMARY OBJECTIVES
+
+Implement all of the following requirements completely and professionally.
+
+Nothing may be skipped.
+
+---
+
+1. CHANGE THE RECITER
+
+Replace the current reciter completely.
+
+The default reciter for the entire application must be:
+
+الشيخ محمد صديق المنشاوي
+
+Every Surah and every Quran page must use his recitation.
+
+Never mix different reciters.
+
+Use high-quality authenticated audio files.
+
+The playback must always be synchronized correctly with the displayed Quran pages.
+
+---
+
+2. AUTO PLAY AFTER PAGE REFRESH
+
+This is mandatory.
+
+When the user refreshes the browser or application:
+
+• Restore the last opened Quran page automatically.
+• Restore the current Surah.
+• Restore the reader settings.
+• Restore the scroll position.
+• Restore the zoom level.
+• Restore all preferences.
+
+Then automatically begin recitation from the FIRST AYAH OF THE CURRENTLY DISPLAYED PAGE.
+
+Do NOT resume from the previous playback timestamp.
+
+Do NOT restart from the beginning of the Surah.
+
+The recitation must always start from the beginning of the page currently displayed.
+
+If browser autoplay policies block playback, queue playback and start immediately after the first user interaction without requiring the user to press Play again.
+
+---
+
+3. SMART PAGE DETECTION
+
+Every Quran page must know:
+
+Page Number
+
+First Ayah
+
+Last Ayah
+
+Corresponding Surah
+
+Corresponding Ayah Range
+
+When playback starts:
+
+Automatically determine the first verse visible on that page.
+
+Begin playback from that verse.
+
+No manual configuration.
+
+---
+
+4. POWERFUL LOCAL STORAGE
+
+The application must rely primarily on local storage.
+
+Implement a robust storage architecture:
+
+Primary Database:
+IndexedDB
+
+Secondary Storage:
+LocalStorage
+
+Application Cache:
+Cache Storage API
+
+Offline Engine:
+Service Worker
+
+The application must work reliably even after:
+
+Browser Refresh
+
+Browser Restart
+
+Device Restart
+
+Internet Loss
+
+Unexpected Crash
+
+Power Failure
+
+---
+
+5. AUTO SAVE
+
+Automatically save:
+
+Current Quran Page
+
+Current Surah
+
+Current Ayah
+
+Reader Theme
+
+Dark Mode
+
+Font Size
+
+Zoom Level
+
+Playback Speed
+
+Volume
+
+Playback State
+
+Bookmarks
+
+Favorites
+
+Reading History
+
+Recent Pages
+
+User Preferences
+
+Last Open Time
+
+Everything must save automatically.
+
+Never require manual saving.
+
+---
+
+6. AUTO RESTORE
+
+On every application launch:
+
+Restore everything automatically.
+
+The user should feel that the application never closed.
+
+Except:
+
+Recitation must always begin from the beginning of the currently displayed page.
+
+---
+
+7. OFFLINE AUDIO CACHE
+
+When an audio page is played:
+
+Store it locally.
+
+Next time:
+
+Load it instantly from cache.
+
+Never download the same audio twice.
+
+Support offline playback whenever cached audio is available.
+
+---
+
+8. AUDIO QUALITY
+
+Implement:
+
+Fast Loading
+
+Buffered Playback
+
+Gapless Transition
+
+No Echo
+
+No Duplicate Playback
+
+No Audio Delay
+
+No Memory Leaks
+
+No Playback Freeze
+
+No Race Conditions
+
+No Event Conflicts
+
+Playback must remain smooth on low-end devices.
+
+---
+
+9. PERFORMANCE
+
+Optimize everything.
+
+Reduce memory usage.
+
+Reduce unnecessary re-rendering.
+
+Optimize IndexedDB access.
+
+Optimize cache strategy.
+
+Optimize rendering.
+
+Optimize scrolling.
+
+Optimize audio loading.
+
+Optimize startup time.
+
+The application must remain extremely fast.
+
+---
+
+10. ERROR RECOVERY
+
+Handle all possible failures:
+
+Audio unavailable
+
+Storage failure
+
+IndexedDB failure
+
+Cache corruption
+
+Offline mode
+
+Network interruption
+
+Recover automatically whenever possible.
+
+Never crash.
+
+Never lose saved progress.
+
+---
+
+11. TEST EVERY SCENARIO
+
+Verify:
+
+Refresh page
+
+Close browser
+
+Open browser
+
+Offline mode
+
+Online mode
+
+Change pages
+
+Change Surahs
+
+Play
+
+Pause
+
+Resume
+
+Seek
+
+Bookmarks
+
+Favorites
+
+Audio cache
+
+Storage recovery
+
+Everything must work correctly.
+
+---
+
+FINAL REQUIREMENTS
+
+The implementation must be production-ready.
+
+No placeholders.
+
+No unfinished logic.
+
+No experimental code.
+
+No broken functionality.
+
+No console errors.
+
+No warnings.
+
+No build errors.
+
+No runtime errors.
+
+The Quran reading experience must be smooth, reliable, intelligent, and fully optimized, using Sheikh محمد صديق المنشاوي as the default reciter, with powerful local storage, automatic recovery of the user's reading session, and automatic recitation from the beginning of the currently displayed page after every refresh.
