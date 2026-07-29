@@ -142,13 +142,16 @@ export function QuranReader() {
     };
 
     audio.onerror = () => {
-      // Skip to next verse silently on error
+      // Always surface the error visibly to the user
+      setAudioError(true);
+      setIsPlaying(false);
+      // Still advance to next verse after a short delay so the user can see the message
       const nextIdx = index + 1;
       if (nextIdx < versesRef.current.length) {
-        playVerseAtIndex(nextIdx, true);
-      } else {
-        setIsPlaying(false);
-        setAudioError(true);
+        setTimeout(() => {
+          setAudioError(false);
+          playVerseAtIndex(nextIdx, true);
+        }, 2500);
       }
     };
 
@@ -168,8 +171,12 @@ export function QuranReader() {
 
   /* ── fetch verses when mode / page / surah changes ── */
   useEffect(() => {
+    const controller = new AbortController();
+
     setActiveVerse(null);
     stopAudio();
+    setVerses([]);
+    versesRef.current = [];
     setLoading(true);
     setAudioError(false);
     setAutoPlayBlocked(false);
@@ -178,9 +185,11 @@ export function QuranReader() {
       ? `https://api.quran.com/api/v4/verses/by_page/${currentPage}?language=ar&fields=text_uthmani,verse_key,chapter_id,verse_number&per_page=50`
       : `https://api.quran.com/api/v4/verses/by_chapter/${selectedSurah}?language=ar&fields=text_uthmani,verse_key,chapter_id,verse_number&per_page=300`;
 
-    fetch(url)
+    fetch(url, { signal: controller.signal })
       .then(r => r.json())
       .then(d => {
+        // Guard: ignore if this effect was superseded by a newer page/surah change
+        if (controller.signal.aborted) return;
         const fetched = d.verses || [];
         setVerses(fetched);
         versesRef.current = fetched;
@@ -191,10 +200,17 @@ export function QuranReader() {
           playVerseAtIndex(0, true);
         }
       })
-      .catch(() => setLoading(false));
+      .catch(err => {
+        if (err.name === "AbortError") return; // superseded — ignore silently
+        setLoading(false);
+      });
 
     if (mode === "page") localStorage.setItem("quran_last_page", currentPage.toString());
     else localStorage.setItem("quran_last_surah", selectedSurah.toString());
+
+    return () => {
+      controller.abort();
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, currentPage, selectedSurah]);
 
