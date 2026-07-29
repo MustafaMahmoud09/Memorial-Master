@@ -83,6 +83,9 @@ export function QuranReader() {
   // Preload buffer: verse.id → pre-fetched HTMLAudioElement
   const preloadBufferRef   = useRef<Map<number, HTMLAudioElement>>(new Map());
 
+  // Whether the user has ever pressed "Start Recitation" this session
+  const userStartedRef     = useRef(false);
+
   // Stable refs so callbacks always see current navigation state
   const modeRef            = useRef(mode);
   const currentPageRef     = useRef(currentPage);
@@ -367,10 +370,10 @@ export function QuranReader() {
         setVerses(fetched);
         versesRef.current = fetched;
         setLoading(false);
-        // Always start recitation from the first ayah of the displayed page/surah
+        // Only auto-play if the user has already started a session (auto-advance between pages/surahs)
+        // On first load, always wait for the user to press "ابدأ التلاوة"
         if (fetched.length > 0) {
-          setCurrentVerseIndex(0);
-          playVerseAtIndex(0, true);
+          playVerseAtIndex(0, userStartedRef.current);
         }
       })
       .catch(err => {
@@ -408,6 +411,7 @@ export function QuranReader() {
     stopAudio();
     setActiveVerse(null);
     setCurrentVerseIndex(0);
+    userStartedRef.current = false; // require "Start Recitation" again after full stop
   }, [stopAudio]);
 
   const handleRepeat = useCallback(() => playVerseAtIndex(currentVerseIndex, true),
@@ -749,6 +753,36 @@ export function QuranReader() {
               <div className="flex flex-col justify-center items-center h-48 gap-3">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
                 <span className="text-sm text-muted-foreground">جارٍ تحميل الصفحة...</span>
+              </div>
+            ) : !userStartedRef.current && !isPlaying && verses.length > 0 && !activeVerse ? (
+              /* ── Start Recitation prompt ── */
+              <div className="flex flex-col items-center justify-center min-h-[38vh] gap-6 text-center">
+                <div className="w-16 h-16 rounded-full flex items-center justify-center"
+                  style={{ background: "rgba(201,162,39,0.08)", border: "1px solid rgba(201,162,39,0.22)" }}>
+                  <Volume2 className="w-7 h-7 text-[#C9A227]" />
+                </div>
+                <div>
+                  <p className="font-serif text-lg text-foreground/80 mb-1">
+                    {toArabicNumerals(verses.length)} آية جاهزة للتلاوة
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    التلاوة لا تبدأ تلقائياً — اضغط على الزر للاستماع
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    userStartedRef.current = true;
+                    playVerseAtIndex(0, true);
+                  }}
+                  className="flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-serif text-lg shadow-lg transition-all hover:scale-[1.03] active:scale-[0.98]"
+                  style={{ background: "linear-gradient(135deg, #B8860B 0%, #C9A227 50%, #8B6914 100%)" }}
+                >
+                  <Play className="w-6 h-6 fill-white" />
+                  ابدأ التلاوة
+                </button>
+                <p className="text-xs text-muted-foreground/60">
+                  التلاوة مستمرة تلقائياً حتى نهاية المصحف · تلاوة الشيخ محمد صديق المنشاوي رحمه الله
+                </p>
               </div>
             ) : (
               <div className="space-y-8">

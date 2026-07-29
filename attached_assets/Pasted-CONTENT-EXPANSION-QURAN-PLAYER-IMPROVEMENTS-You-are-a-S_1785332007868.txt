@@ -1,0 +1,245 @@
+CONTENT EXPANSION & QURAN PLAYER IMPROVEMENTS
+
+You are a Senior Full-Stack Engineer and Islamic Content Architect.
+
+Your task is to improve the existing project without breaking any current functionality.
+
+Implement all the following changes professionally.
+
+---
+
+1. UPDATE THE HIJRI DATE OF PASSING
+
+Update the Hijri date of passing everywhere in the project.
+
+Replace the current Hijri date with:
+
+8 شعبان
+
+Update it consistently in:
+
+- Hero Section
+- Information Cards
+- About Section
+- Timeline
+- SEO Metadata
+- Structured Data
+- Any page where the date appears
+
+There must be no old date remaining.
+
+---
+
+2. GREATLY EXPAND ISLAMIC CONTENT
+
+The website currently contains too little Islamic content.
+
+Expand it significantly.
+
+Include a rich built-in library containing:
+
+Daily Duas
+
+Add hundreds of authentic duas from the Quran and authentic Sunnah.
+
+Organize them into categories.
+
+Examples:
+
+Morning
+
+Evening
+
+Sleep
+
+Wake Up
+
+Travel
+
+Entering Mosque
+
+Leaving Mosque
+
+Food
+
+Parents
+
+Forgiveness
+
+Mercy
+
+Relief
+
+Anxiety
+
+Provision
+
+Success
+
+General Supplications
+
+Death and Mercy
+
+---
+
+Quran Verses
+
+Include a very large collection of Quran verses.
+
+Categorize them by topic:
+
+Mercy
+
+Patience
+
+Forgiveness
+
+Hope
+
+Paradise
+
+Faith
+
+Remembrance
+
+Gratitude
+
+Repentance
+
+Parents
+
+Death
+
+Good Deeds
+
+The verses should rotate automatically each day.
+
+---
+
+Hadith Collection
+
+Include a large collection of authentic Hadith.
+
+Use only authentic narrations.
+
+Categorize them.
+
+Rotate one Hadith daily.
+
+---
+
+Islamic Wisdom
+
+Add hundreds of beautiful Islamic reminders and beneficial sayings from reliable sources.
+
+Rotate daily.
+
+---
+
+Dhikr Library
+
+Expand the Dhikr section dramatically.
+
+Include:
+
+Morning Adhkar
+
+Evening Adhkar
+
+After Prayer
+
+Before Sleep
+
+After Waking
+
+Travel
+
+Home
+
+Mosque
+
+Food
+
+Rain
+
+Illness
+
+General Dhikr
+
+Istighfar
+
+Salawat
+
+Tasbeeh
+
+Tahleel
+
+Takbeer
+
+Every Dhikr should include:
+
+Arabic Text
+
+Reference
+
+Virtue (when authentic)
+
+Easy reading layout
+
+---
+
+3. QURAN RECITATION BEHAVIOR
+
+Modify the Quran player.
+
+The recitation must NOT start automatically when the page opens.
+
+Instead:
+
+Display a clear Start Recitation button.
+
+Only after the user presses this button should the recitation begin.
+
+This respects browser autoplay policies and gives the user full control.
+
+After the user presses Start:
+
+- Begin recitation immediately.
+- Continue automatically from one verse to the next with no unnecessary delay.
+- Continue automatically through the entire page.
+- At the end of the page, move to the next page automatically (in Page Mode).
+- At the end of a Surah, continue to the next Surah automatically (in Surah Mode).
+- Never stop until the user presses Pause or Stop.
+
+There should be:
+
+- No silent gaps.
+- No unnecessary buffering.
+- No confirmation dialogs.
+- No repeated Start button during the listening session.
+
+---
+
+4. PERFORMANCE
+
+Optimize all newly added content.
+
+Use efficient local storage and caching.
+
+Lazy-load large datasets when appropriate.
+
+Prevent duplicate loading.
+
+Maintain excellent performance even with the expanded content library.
+
+---
+
+FINAL REQUIREMENTS
+
+Do not remove any existing feature.
+
+Do not reduce the current functionality.
+
+Integrate all new content seamlessly into the existing design.
+
+The project must remain clean, fast, responsive, production-ready, and provide a rich Islamic experience with a vast collection of authentic duas, Quran verses, hadiths, wisdom, and adhkar, while ensuring the Quran recitation starts only after the user presses Start Recitation and then continues automatically without interruption.
