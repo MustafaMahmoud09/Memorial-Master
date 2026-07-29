@@ -10,10 +10,7 @@ export function TimeCounter() {
     { label: "سنة", value: time.years },
     { label: "شهر", value: time.months },
     { label: "أسبوع", value: time.weeks },
-    { label: "يوم", value: time.days },
-    { label: "ساعة", value: time.hours },
-    { label: "دقيقة", value: time.minutes },
-    { label: "ثانية", value: time.seconds }
+    { label: "يوم", value: time.days }
   ];
 
   return (

@@ -3,6 +3,16 @@ import { motion } from "framer-motion";
 import { MapPin, Compass, Loader2 } from "lucide-react";
 import { toArabicNumerals } from "@/lib/utils";
 
+function to12Hour(time24: string): string {
+  const [hStr, mStr] = time24.split(":");
+  let h = parseInt(hStr, 10);
+  const m = mStr.padStart(2, "0");
+  const suffix = h < 12 ? "ص" : "م";
+  if (h === 0) h = 12;
+  else if (h > 12) h = h - 12;
+  return `${h}:${m} ${suffix}`;
+}
+
 type PrayerTimes = {
   Fajr: string;
   Sunrise: string;
@@ -54,14 +64,33 @@ export function PrayerTimesSection() {
 
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setLocationName("الموقع الحالي");
-          fetchTimes(pos.coords.latitude, pos.coords.longitude);
+        async (pos) => {
+          const { latitude, longitude } = pos.coords;
+          // Reverse geocode to get city name
+          try {
+            const geo = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=ar`,
+              { headers: { "Accept-Language": "ar" } }
+            );
+            const geoData = await geo.json();
+            const city =
+              geoData?.address?.city ||
+              geoData?.address?.town ||
+              geoData?.address?.village ||
+              geoData?.address?.county ||
+              "الموقع الحالي";
+            const country = geoData?.address?.country || "";
+            setLocationName(country ? `${city}، ${country}` : city);
+          } catch {
+            setLocationName("الموقع الحالي");
+          }
+          fetchTimes(latitude, longitude);
         },
         () => {
           // Fallback to Cairo
           fetchTimes(30.0444, 31.2357);
-        }
+        },
+        { timeout: 10000 }
       );
     } else {
       fetchTimes(30.0444, 31.2357);
@@ -105,7 +134,7 @@ export function PrayerTimesSection() {
                   {ARABIC_PRAYERS[key as keyof PrayerTimes]}
                 </div>
                 <div className="text-xl md:text-2xl font-bold text-primary font-sans arabic-numerals">
-                  {toArabicNumerals(timeStr)}
+                  {toArabicNumerals(to12Hour(timeStr))}
                 </div>
               </motion.div>
             ))}
