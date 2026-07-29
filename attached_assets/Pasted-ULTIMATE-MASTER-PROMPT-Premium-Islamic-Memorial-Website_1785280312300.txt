@@ -1,0 +1,332 @@
+ULTIMATE MASTER PROMPT — Premium Islamic Memorial Website
+
+You are an elite team of world-class Product Designers, UI/UX Designers, Motion Designers, Frontend Engineers, Backend Engineers, SEO Specialists, Accessibility Experts, and Performance Engineers.
+
+Your mission is to create a luxury Islamic memorial website dedicated as an ongoing Sadaqah Jariyah for my late father.
+
+This is not a normal memorial page.
+
+It must be a premium emotional digital experience that encourages visitors to remember Allah, perform Dhikr, read the Quran, and sincerely make dua.
+
+The project is dedicated to:
+
+المهندس أيمن مبروك ريان
+
+Display this beautiful dua prominently:
+
+اللهم اغفر للمهندس أيمن مبروك ريان، وارحمه رحمةً واسعة، وعافه واعفُ عنه، وأكرم نُزُله، ووسِّع مُدخله، واغسله بالماء والثلج والبرد، ونقِّه من الذنوب والخطايا كما يُنقَّى الثوب الأبيض من الدنس، واجعل قبره روضةً من رياض الجنة، وافتح له بابًا إلى الفردوس الأعلى، واجعل هذا الموقع صدقةً جاريةً له، واجعل كل دعاء وذكر وقراءة قرآن تتم من خلاله في ميزان حسناته. اللهم آمين.
+
+---
+
+PHOTO INTEGRATION
+
+I will upload a high-quality image of my father.
+
+The uploaded image must become the emotional centerpiece of the website.
+
+Do NOT simply place it inside a square or circle.
+
+Blend it naturally into the design.
+
+Requirements:
+
+- Professional image enhancement.
+- Preserve facial features completely.
+- Remove background only if necessary.
+- Create premium lighting.
+- Luxury frame.
+- Soft shadows.
+- Depth.
+- Glass reflections.
+- Elegant glow.
+- Smooth floating animation.
+- Cinematic reveal animation.
+- Responsive on all devices.
+
+The image must feel like it was originally designed as part of the website.
+
+---
+
+DESIGN
+
+Create an original premium design with:
+
+Pure White Background
+
+Luxury Gold Accents
+
+Emerald Green Details
+
+Soft Gray Sections
+
+Glassmorphism
+
+Modern Arabic Typography
+
+Large White Space
+
+Soft Shadows
+
+Beautiful Gradients
+
+Luxury Cards
+
+Micro Interactions
+
+Parallax Effects
+
+Smooth Scrolling
+
+Premium Hover Effects
+
+Fade Animations
+
+Premium Motion Design
+
+Floating Elements
+
+Elegant Icons
+
+Responsive Layout
+
+Every pixel must feel handcrafted.
+
+---
+
+HERO SECTION
+
+Display:
+
+المهندس أيمن مبروك ريان
+
+The dua.
+
+Large integrated portrait.
+
+Live clock.
+
+Live Hijri date.
+
+Live Gregorian date.
+
+Prayer countdown.
+
+Elegant animated background.
+
+---
+
+LIVE ISLAMIC INFORMATION
+
+Automatically display:
+
+Current Time
+
+Gregorian Date
+
+Hijri Date
+
+Current Day
+
+Prayer Times
+
+Sunrise
+
+Sunset
+
+Remaining Time Until Next Prayer
+
+Qibla Direction
+
+Automatic visitor location (with permission)
+
+---
+
+SINCE 11 MARCH 2022
+
+Calculate automatically:
+
+Years
+
+Months
+
+Weeks
+
+Days
+
+Hours
+
+Minutes
+
+Seconds
+
+Update every second.
+
+Also calculate automatically:
+
+"مرت .... صلاة جمعة منذ 11 مارس 2022"
+
+Increase every Friday forever.
+
+---
+
+DIGITAL TASBEEH
+
+Include premium counters for:
+
+سبحان الله
+
+الحمد لله
+
+الله أكبر
+
+لا إله إلا الله
+
+لا حول ولا قوة إلا بالله
+
+أستغفر الله
+
+سبحان الله وبحمده
+
+سبحان الله العظيم
+
+اللهم صل وسلم على نبينا محمد ﷺ
+
+Each counter must include:
+
+Animation
+
+Glow
+
+Ripple
+
+Sound toggle
+
+Vibration toggle
+
+Daily Counter
+
+Global Counter
+
+---
+
+DUA
+
+Beautiful dua section.
+
+Visitors can:
+
+Make dua.
+
+Write a personal dua.
+
+Increase global dua counter.
+
+---
+
+DAILY CONTENT
+
+Automatically rotate every day:
+
+Verse of the Day
+
+Hadith of the Day
+
+Dua of the Day
+
+Islamic Reminder
+
+Wisdom
+
+---
+
+QURAN
+
+Complete Quran.
+
+Bookmarks.
+
+Resume Reading.
+
+Search.
+
+Audio Recitation.
+
+Multiple Reciters.
+
+Responsive Reader.
+
+---
+
+STATISTICS
+
+Display:
+
+Visitors
+
+Total Duas
+
+Total Dhikr
+
+Total Istighfar
+
+Total Salawat
+
+Most Used Dhikr
+
+Countries of Visitors
+
+---
+
+FRIDAY MODE
+
+Every Friday automatically activate:
+
+Green & Gold Theme
+
+Surah Al-Kahf Reminder
+
+Friday Dua
+
+Extra Salawat Reminder
+
+Elegant Friday Animations
+
+---
+
+PERFORMANCE
+
+100/100 Lighthouse
+
+Perfect SEO
+
+Responsive
+
+Lazy Loading
+
+Image Optimization
+
+Accessibility
+
+PWA Support
+
+Fast Loading
+
+No Errors
+
+Production Ready
+
+---
+
+FINAL GOAL
+
+This must not feel like a simple website.
+
+It must feel like an award-winning luxury digital experience that inspires remembrance of Allah and sincere dua.
+
+Every animation must be smooth.
+
+Every interaction must feel premium.
+
+Every detail must communicate peace, dignity, beauty, and respect.
+
+The uploaded portrait of my father must blend seamlessly with the interface, becoming the emotional heart of the entire experience while preserving his appearance faithfully and respectfully.

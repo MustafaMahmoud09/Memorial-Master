@@ -1,0 +1,160 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;500;600;700&family=Aref+Ruqaa:wght@400;700&display=swap');
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card-border: hsl(var(--card-border));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --font-sans: 'Cairo', sans-serif;
+  --font-serif: 'Amiri', serif;
+  --font-display: 'Aref Ruqaa', serif;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  @keyframes pulse-gold {
+    0%, 100% { opacity: 1; filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.3)); }
+    50% { opacity: 0.85; filter: drop-shadow(0 0 35px rgba(212, 175, 55, 0.7)); }
+  }
+  @keyframes shimmer {
+    0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+    50% { opacity: 0.8; }
+    100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+  }
+  @keyframes glow-line {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+}
+
+:root {
+  /* Dark Gold Sanctuary Theme */
+  --background: 30 13% 6%;
+  --foreground: 35 33% 93%;
+  --border: 30 13% 16%;
+  --card: 30 13% 9%;
+  --card-foreground: 35 33% 93%;
+  --card-border: 30 13% 16%;
+  --primary: 46 65% 52%;
+  --primary-foreground: 30 13% 6%;
+  --secondary: 30 13% 12%;
+  --secondary-foreground: 46 65% 75%;
+  --muted: 30 13% 12%;
+  --muted-foreground: 35 20% 65%;
+  --accent: 46 65% 52%;
+  --accent-foreground: 30 13% 6%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 35 33% 93%;
+  --input: 30 13% 16%;
+  --ring: 46 65% 52%;
+  --radius: 1rem;
+}
+
+.friday-mode {
+  --background: 145 48% 5%;
+  --foreground: 46 65% 85%;
+  --border: 145 46% 15%;
+  --card: 145 46% 8%;
+  --card-foreground: 46 65% 85%;
+  --card-border: 145 46% 18%;
+  --primary: 46 65% 52%;
+  --primary-foreground: 145 48% 5%;
+  --secondary: 145 46% 12%;
+  --secondary-foreground: 46 65% 85%;
+  --muted: 145 46% 12%;
+  --muted-foreground: 145 20% 60%;
+  --accent: 46 65% 52%;
+  --accent-foreground: 145 48% 5%;
+  --input: 145 46% 15%;
+  --ring: 46 65% 52%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply font-sans antialiased bg-background text-foreground overflow-x-hidden selection:bg-primary selection:text-primary-foreground;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-bold tracking-wide;
+  }
+}
+
+.arabic-numerals {
+  font-feature-settings: "tnum" 1;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-gold {
+  animation: pulse-gold 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #f3e5ab 0%, #d4af37 50%, #aa7c11 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.05) 100%);
+}
+
+.tasbeeh-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.tasbeeh-ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple 0.8s ease-out;
+  background-color: rgba(212, 175, 55, 0.4);
+  pointer-events: none;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.glass-panel {
+  background: rgba(30, 27, 24, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.1);
+}
+.friday-mode .glass-panel {
+  background: rgba(14, 38, 24, 0.4);
+}

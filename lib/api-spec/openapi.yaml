@@ -1,22 +1,26 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Memorial website API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: stats
+    description: Site statistics
+  - name: dhikr
+    description: Global dhikr counters
+  - name: duas
+    description: Personal duas
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +28,103 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /stats:
+    get:
+      operationId: getStats
+      tags: [stats]
+      summary: Get site statistics
+      responses:
+        "200":
+          description: Site statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteStats"
+
+  /stats/visit:
+    post:
+      operationId: recordVisit
+      tags: [stats]
+      summary: Record a visitor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VisitInput"
+      responses:
+        "200":
+          description: Visit recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteStats"
+
+  /dhikr/counts:
+    get:
+      operationId: getDhikrCounts
+      tags: [dhikr]
+      summary: Get all global dhikr counts
+      responses:
+        "200":
+          description: Dhikr counts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DhikrCounts"
+
+  /dhikr/increment:
+    post:
+      operationId: incrementDhikr
+      tags: [dhikr]
+      summary: Increment a global dhikr counter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DhikrIncrement"
+      responses:
+        "200":
+          description: Incremented
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DhikrCounts"
+
+  /duas:
+    get:
+      operationId: getDuas
+      tags: [duas]
+      summary: Get all personal duas
+      responses:
+        "200":
+          description: List of duas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Dua"
+    post:
+      operationId: submitDua
+      tags: [duas]
+      summary: Submit a personal dua
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DuaInput"
+      responses:
+        "201":
+          description: Dua submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dua"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +135,99 @@ components:
       required:
         - status
 
+    SiteStats:
+      type: object
+      properties:
+        totalVisitors:
+          type: number
+        totalDuas:
+          type: number
+        totalDhikr:
+          type: number
+        totalIstighfar:
+          type: number
+        totalSalawat:
+          type: number
+        mostUsedDhikr:
+          type: string
+        countries:
+          type: array
+          items:
+            type: string
+      required:
+        - totalVisitors
+        - totalDuas
+        - totalDhikr
+        - totalIstighfar
+        - totalSalawat
+        - mostUsedDhikr
+        - countries
+
+    VisitInput:
+      type: object
+      properties:
+        country:
+          type: ["string", "null"]
+      required: []
+
+    DhikrCounts:
+      type: object
+      properties:
+        SubhanAllah:
+          type: number
+        Alhamdulillah:
+          type: number
+        AllahuAkbar:
+          type: number
+        LaIlahaIllAllah:
+          type: number
+        LaHawla:
+          type: number
+        Astaghfirullah:
+          type: number
+        SubhanAllahWaBiHamdihi:
+          type: number
+        SubhanAllahAlAzeem:
+          type: number
+        Salawat:
+          type: number
+      required:
+        - SubhanAllah
+        - Alhamdulillah
+        - AllahuAkbar
+        - LaIlahaIllAllah
+        - LaHawla
+        - Astaghfirullah
+        - SubhanAllahWaBiHamdihi
+        - SubhanAllahAlAzeem
+        - Salawat
+
+    DhikrIncrement:
+      type: object
+      properties:
+        dhikrKey:
+          type: string
+      required:
+        - dhikrKey
+
+    Dua:
+      type: object
+      properties:
+        id:
+          type: number
+        text:
+          type: string
+        createdAt:
+          type: string
+      required:
+        - id
+        - text
+        - createdAt
+
+    DuaInput:
+      type: object
+      properties:
+        text:
+          type: string
+      required:
+        - text

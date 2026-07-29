@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "Memorial – المهندس أيمن مبروك ريان"
+version = "1.0.0"
+id = "artifacts/memorial"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20534
+
+[services.development]
+run = "pnpm --filter @workspace/memorial run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/memorial", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/memorial/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20534"
+BASE_PATH = "/"
