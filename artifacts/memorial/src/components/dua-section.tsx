@@ -11,7 +11,11 @@ const GOLD = "linear-gradient(135deg, #B8860B 0%, #C9A227 50%, #8B6914 100%)";
 
 export function DuaSection() {
   const [duaText, setDuaText]   = useState("");
-  const { data: duas = [], isLoading } = useGetDuas();
+  const { data, isLoading } = useGetDuas();
+  // A default of [] only covers `undefined`. If /api/duas ever answers with a
+  // non-array (an HTML error page comes back as a string), the .map below would
+  // throw and blank the whole page, so narrow to an array here.
+  const duas = Array.isArray(data) ? data : [];
   const submitDua   = useSubmitDua();
   const queryClient = useQueryClient();
 
