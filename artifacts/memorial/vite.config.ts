@@ -79,6 +79,14 @@ export default defineConfig(async ({ command }) => {
       fs: {
         strict: true,
       },
+      // Without this, /api/* falls through to the SPA and returns index.html,
+      // so the API client parses HTML instead of JSON.
+      proxy: {
+        '/api': {
+          target: process.env.API_URL || 'http://localhost:3001',
+          changeOrigin: true,
+        },
+      },
     },
     preview: {
       port,
